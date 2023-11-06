@@ -4,8 +4,8 @@ Object::Object(std::string FilePath)
 {
 
 	CreateVerticies(FilePath);
-	CreateVertexNormals(FilePath);
 	CreateIndicies(FilePath);
+	CreateVertexNormals(FilePath);
 
 }
 
@@ -43,8 +43,6 @@ void Object::FormatFile(std::string FilePath)
 	Obj.close();
 
 }
-
-
 
 void Object::CreateVerticies(std::string FilePath)
 {
@@ -146,14 +144,34 @@ void Object::CreateVertexNormals(std::string FilePath)
 			}
 		}
 	}
-	for (int i = 0; i < VertexNormals.size(); i++)
-	{
-		//std::cout << VertexNormals[i] << std::endl;
-	}
-
 	Obj.close();
-}
+	//std::cout << VertexNormals.size() << std::endl;
+	//VertexNormals.clear();
+	//std::cout << VertexNormals.size() << std::endl;
+	if (VertexNormals.size() == 0)
+	{
+		GenerateVertexNormalsFromVerticies();
+	}
+	//std::cout << VertexNormals.size() << std::endl;
+	//std::cout << Indices.size() << std::endl;
 
+
+}
+void Object::GenerateVertexNormalsFromVerticies()
+{
+	for (int i = 0; i < Indices.size() / 3; i++)// This is wrong IDK how, it is supposed to generate the normals for each face.
+	{
+		glm::vec3 A{ Verticies[Indices[(3 * i) + 0] + 0], Verticies[Indices[(3 * i) + 0] + 1], Verticies[Indices[(3 * i) + 0] + 2] };
+		glm::vec3 B{ Verticies[Indices[(3 * i) + 1] + 0], Verticies[Indices[(3 * i) + 1] + 1], Verticies[Indices[(3 * i) + 1] + 2] };
+		glm::vec3 C{ Verticies[Indices[(3 * i) + 2] + 0], Verticies[Indices[(3 * i) + 2] + 1], Verticies[Indices[(3 * i) + 2] + 2] };
+		glm::vec3 D = normalize(cross(B - A, C - A));
+		//std::cout << D.x << ' ' << D.y << ' ' << D.z << std::endl;
+		VertexNormals.push_back(D.x);
+		VertexNormals.push_back(D.y);
+		VertexNormals.push_back(D.z);
+
+	}
+}
 
 void Object::CreateIndicies(std::string FilePath)
 {
@@ -191,7 +209,7 @@ void Object::CreateIndicies(std::string FilePath)
 				}
 				if (start.size() == 3 && end.size() == 3)
 				{
-					TriangleIndices.push_back(std::stof(Ind) - 1);
+					Indices.push_back(std::stof(Ind) - 1);
 				}
 				else if (start.size() == 4 && end.size() == 4)
 				{
@@ -207,20 +225,11 @@ void Object::CreateIndicies(std::string FilePath)
 	}
 	QuadToTri(QuadIndices);
 
-	for (int i = 0; i < TriangleIndices.size(); i++)
+	for (int i = 0; i < Indices.size(); i++)
 	{
 		//std::cout << TriangleIndices[i] << std::endl;
 	}
-	std::cout << Verticies.size() / 3 << std::endl;
-	VertexSize = TriangleIndices.size() + QuadIndices.size();
 	Obj.close();
-
-
-	//for (int i = 0; i < Verticies.size()/3; i++)
-	//{
-	//	Indices.push_back(i);
-	//	//std::cout << Indices[i] << std::endl;
-	//}
 }
 
 void Object::QuadToTri(std::vector<unsigned int> QuadIndices)
@@ -237,6 +246,6 @@ void Object::QuadToTri(std::vector<unsigned int> QuadIndices)
 	}
 	for (int i = 0; i < TriIndTemp.size(); i++)
 	{
-		TriangleIndices.push_back(TriIndTemp[i]);
+		Indices.push_back(TriIndTemp[i]);
 	}
 }

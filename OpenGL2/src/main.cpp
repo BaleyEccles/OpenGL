@@ -7,9 +7,11 @@
 #include "Object.h"
 #include <random>
 #include "glm/glm.hpp"
+#include "VertexArray.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
+void fps(int& nbFrames, double& lastTime, GLFWwindow* Window);
 
 void GLAPIENTRY
 MessageCallback(GLenum source,
@@ -46,7 +48,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "0.000000", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -82,111 +84,39 @@ int main()
         std::vector<std::string>{"Shaders/VertexShader.vert", "Shaders/FragmentShader.frag"},
         std::vector<GLenum>{GL_VERTEX_SHADER, GL_FRAGMENT_SHADER}
     );
-    //// Vertex Shader
-    //std::ifstream VertShader("Shaders/VertexShader.vert");
-    //std::string VertContents((std::istreambuf_iterator<char>(VertShader)),
-    //    std::istreambuf_iterator<char>());
-    //VertShader.close();
-    //const char* vertexShaderSource = VertContents.c_str();
-    //unsigned int vertexShader;
-    //vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    //glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    //glCompileShader(vertexShader);
-    //{// Check if compilation failed
-    //    int  success;
-    //    char infoLog[512];
-    //    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    //
-    //    if (!success)
-    //    {
-    //        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-    //        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    //    }
-    //}
-    //
-    //// Fragment Shader
-    //std::ifstream FragShader("Shaders/FragmentShader.frag");
-    //std::string FragContents((std::istreambuf_iterator<char>(FragShader)),
-    //    std::istreambuf_iterator<char>());
-    //FragShader.close();
-    ////FragContents.c_str();
-    //const char* fragmentShaderSource = FragContents.c_str();
-    //unsigned int fragmentShader;
-    //fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    //glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    //glCompileShader(fragmentShader);
-    //{// Check if compilation failed
-    //    int  success;
-    //    char infoLog[512];
-    //    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    //
-    //    if (!success)
-    //    {
-    //        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-    //        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    //    }
-    //}
-    //
-    //// Attach Shaders
-    //unsigned int shaderProgram;
-    //shaderProgram = glCreateProgram();
-    //glAttachShader(shaderProgram, vertexShader);
-    //glAttachShader(shaderProgram, fragmentShader);
-    //glLinkProgram(shaderProgram);
-    //{// Check if linking failed
-    //    int  success;
-    //    char infoLog[512];
-    //    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    //
-    //    if (!success)
-    //    {
-    //        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-    //        std::cout << "ERROR::SHADER::LINKING::COMPILATION_FAILED\n" << infoLog << std::endl;
-    //    }
-    //}
 
 
     Object Obj1("assets/teapot.obj");
 
-
     std::vector<float> vertices = Obj1.Verticies;
     std::vector<float> vertexNormals = Obj1.VertexNormals;
 
-    std::vector<unsigned int> TriIndices = Obj1.TriangleIndices;
+    std::vector<unsigned int> TriIndices = Obj1.Indices;
 
-    unsigned int VBO, VAO, EBO, NBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &NBO);
-    glGenBuffers(1, &EBO);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
+    VertexArray Vert;
+    VertexBuffer VertexBufferObject = {
+        GL_ARRAY_BUFFER,
+        0,
+        Obj1.Verticies,
+        3,
+        GL_FLOAT
+    };
+    VertexBuffer NormalBufferObject = {
+        GL_ARRAY_BUFFER,
+        1,
+        Obj1.VertexNormals,
+        3,
+        GL_FLOAT
+    };
+    IndexBuffer IndexBufferObject = {
+        GL_ELEMENT_ARRAY_BUFFER,
+        Obj1.Indices,
+        GL_UNSIGNED_INT
+    };
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), &vertices[0], GL_STATIC_DRAW);
-
-
-    glBindBuffer(GL_ARRAY_BUFFER, NBO);
-    glBufferData(GL_ARRAY_BUFFER, vertexNormals.size() * sizeof(vertexNormals[0]), &vertexNormals[0], GL_STATIC_DRAW);
-
-
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, TriIndices.size() * sizeof(TriIndices[0]), &TriIndices[0], GL_STATIC_DRAW);
-
-
-    // What the vertex array 'looks like'
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, NBO);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-    glEnableVertexAttribArray(0);
-
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    Vert.AddVertexBuffer(VertexBufferObject);
+    Vert.AddVertexBuffer(NormalBufferObject);
+    Vert.AddIndexBuffer(IndexBufferObject);
 
     // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -209,13 +139,15 @@ int main()
         ((float)rand() / RAND_MAX) - 0.5f
     };
     unsigned int frame = 0;
-
+    int nbFrames = 0;
+    double lastTime = glfwGetTime();
     float scale = Obj1.MaxVertexValue;
 
 
     int i = 0;
     while (!glfwWindowShouldClose(window))
     {
+        fps(nbFrames, lastTime, window);
         // input
          // -----
         processInput(window);
@@ -233,9 +165,7 @@ int main()
         ShaderProgram.SetUniform3f("Light", light.x, light.y, light.z);
         ShaderProgram.SetUniform1f("Scale", scale);
 
-        glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        glDrawElements(GL_TRIANGLES, TriIndices.size(), GL_UNSIGNED_INT, 0);
-        //glDrawArrays(GL_TRIANGLES, 0, vertices.size()/3);
+        Vert.Render();
 
         if (frame % 10000 == 0)
         {
@@ -250,19 +180,6 @@ int main()
             gamma += 0.001f * gammaSpeed;
         }
 
-        if (frame % 1000 == 0)
-        {
-            //lightx = ((float)rand() / RAND_MAX) - 0.5f;
-            //lighty = ((float)rand() / RAND_MAX) - 0.5f;
-            //lightz = ((float)rand() / RAND_MAX) - 0.5f;
-
-        }
-        if (frame % 10 == 0)
-        {
-            //scale += 0.1f;
-            //std::cout << scale << std::endl;
-        }
-
         frame += 1;
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -274,19 +191,26 @@ int main()
     return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 }
 
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    // make sure the viewport matches the new window dimensions; note that width and 
-    // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+}
+
+void fps(int &nbFrames, double &lastTime, GLFWwindow* Window)
+{
+    double currentTime = glfwGetTime();
+    nbFrames++;
+    if (currentTime - lastTime >= 1.0) { // If last prinf() was more than 1 sec ago
+        // printf and reset timer
+        glfwSetWindowTitle(Window, std::to_string(double(nbFrames)).c_str());
+        nbFrames = 0;
+        lastTime += 1.0;
+
+    }
 }

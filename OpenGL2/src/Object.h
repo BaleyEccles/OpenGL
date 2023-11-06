@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include "glm/glm.hpp"
 
 class Object
 {
@@ -13,7 +14,7 @@ public:
 
 	std::vector<float> Verticies;	
 	std::vector<float> VertexNormals;
-	std::vector<unsigned int> TriangleIndices;
+	std::vector<unsigned int> Indices;
 
 	int VertexSize;
 	int IndexSize;
@@ -30,6 +31,6 @@ private:
 	void CreateVertexNormals(std::string FilePath);
 	void CreateIndicies(std::string FilePath);
 	void QuadToTri(std::vector<unsigned int> QuadIndices);
-	void CreateMaxValues();
+	void GenerateVertexNormalsFromVerticies();
 };
 

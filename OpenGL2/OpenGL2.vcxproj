@@ -105,6 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)OpenGL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,6 +123,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)OpenGL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Object.cpp" />
@@ -143,6 +146,7 @@
     <ClInclude Include="include\GLFW\glfw3.h" />
     <ClInclude Include="include\GLFW\glfw3native.h" />
     <ClInclude Include="include\KHR\khrplatform.h" />
+    <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\Object.h" />
     <ClInclude Include="src\Shader.h" />
   </ItemGroup>
