@@ -17,15 +17,19 @@ public:
 
 	int VertexSize;
 	int IndexSize;
-
-	float MaxVertexValue;
-
+	float MaxVertexValue = 0.0f;
+	float maxX = 0.0f;
+	float minX = 0.0f;
+	float maxY = 0.0f;
+	float minY = 0.0f;
+	float maxZ = 0.0f;
+	float minZ = 0.0f;
 private:
 	void FormatFile(std::string FilePath);
 	void CreateVerticies(std::string FilePath);
 	void CreateVertexNormals(std::string FilePath);
 	void CreateIndicies(std::string FilePath);
 	void QuadToTri(std::vector<unsigned int> QuadIndices);
-
+	void CreateMaxValues();
 };
 

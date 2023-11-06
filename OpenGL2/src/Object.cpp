@@ -12,7 +12,7 @@ Object::Object(std::string FilePath)
 Object::~Object()
 {
 
-}	
+}
 
 void Object::FormatFile(std::string FilePath)
 {
@@ -157,7 +157,7 @@ void Object::CreateVertexNormals(std::string FilePath)
 
 void Object::CreateIndicies(std::string FilePath)
 {
-	
+
 	std::ifstream Obj(FilePath);
 	std::vector<unsigned int> QuadIndices;
 
@@ -170,7 +170,7 @@ void Object::CreateIndicies(std::string FilePath)
 			std::vector<int> end;
 			for (int i = 0; i < line.size(); i++)
 			{
-				if (line[i] == ' ' && line[i+1] != ' ')
+				if (line[i] == ' ' && line[i + 1] != ' ')
 				{
 					start.push_back(i + 1);
 				}
@@ -201,7 +201,7 @@ void Object::CreateIndicies(std::string FilePath)
 					throw "WTF";
 				}
 			}
-			
+
 
 		}
 	}
@@ -211,10 +211,10 @@ void Object::CreateIndicies(std::string FilePath)
 	{
 		//std::cout << TriangleIndices[i] << std::endl;
 	}
-	std::cout << Verticies.size()/3 << std::endl;
+	std::cout << Verticies.size() / 3 << std::endl;
 	VertexSize = TriangleIndices.size() + QuadIndices.size();
 	Obj.close();
-	
+
 
 	//for (int i = 0; i < Verticies.size()/3; i++)
 	//{
@@ -226,14 +226,14 @@ void Object::CreateIndicies(std::string FilePath)
 void Object::QuadToTri(std::vector<unsigned int> QuadIndices)
 {
 	std::vector<unsigned int> TriIndTemp;
-	for (int i = 0; i < QuadIndices.size()/4; i++)
+	for (int i = 0; i < QuadIndices.size() / 4; i++)
 	{
-		TriIndTemp.push_back(QuadIndices[(4*i) + 0]);	//1
-		TriIndTemp.push_back(QuadIndices[(4*i) + 1]);	//2
-		TriIndTemp.push_back(QuadIndices[(4*i) + 2]);	//3
-		TriIndTemp.push_back(QuadIndices[(4*i) + 0]);	//1
-		TriIndTemp.push_back(QuadIndices[(4*i) + 3]);	//4
-		TriIndTemp.push_back(QuadIndices[(4*i) + 2]);	//3
+		TriIndTemp.push_back(QuadIndices[(4 * i) + 0]);	//1
+		TriIndTemp.push_back(QuadIndices[(4 * i) + 1]);	//2
+		TriIndTemp.push_back(QuadIndices[(4 * i) + 2]);	//3
+		TriIndTemp.push_back(QuadIndices[(4 * i) + 0]);	//1
+		TriIndTemp.push_back(QuadIndices[(4 * i) + 3]);	//4
+		TriIndTemp.push_back(QuadIndices[(4 * i) + 2]);	//3
 	}
 	for (int i = 0; i < TriIndTemp.size(); i++)
 	{

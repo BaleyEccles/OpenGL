@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <fstream>
-
+#include "Shader.h"
 #include "Object.h"
 #include <random>
 #include "glm/glm.hpp"
@@ -78,72 +78,75 @@ int main()
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
 
+    Shader ShaderProgram(
+        std::vector<std::string>{"Shaders/VertexShader.vert", "Shaders/FragmentShader.frag"},
+        std::vector<GLenum>{GL_VERTEX_SHADER, GL_FRAGMENT_SHADER}
+    );
+    //// Vertex Shader
+    //std::ifstream VertShader("Shaders/VertexShader.vert");
+    //std::string VertContents((std::istreambuf_iterator<char>(VertShader)),
+    //    std::istreambuf_iterator<char>());
+    //VertShader.close();
+    //const char* vertexShaderSource = VertContents.c_str();
+    //unsigned int vertexShader;
+    //vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    //glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    //glCompileShader(vertexShader);
+    //{// Check if compilation failed
+    //    int  success;
+    //    char infoLog[512];
+    //    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    //
+    //    if (!success)
+    //    {
+    //        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+    //        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+    //    }
+    //}
+    //
+    //// Fragment Shader
+    //std::ifstream FragShader("Shaders/FragmentShader.frag");
+    //std::string FragContents((std::istreambuf_iterator<char>(FragShader)),
+    //    std::istreambuf_iterator<char>());
+    //FragShader.close();
+    ////FragContents.c_str();
+    //const char* fragmentShaderSource = FragContents.c_str();
+    //unsigned int fragmentShader;
+    //fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    //glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    //glCompileShader(fragmentShader);
+    //{// Check if compilation failed
+    //    int  success;
+    //    char infoLog[512];
+    //    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    //
+    //    if (!success)
+    //    {
+    //        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+    //        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+    //    }
+    //}
+    //
+    //// Attach Shaders
+    //unsigned int shaderProgram;
+    //shaderProgram = glCreateProgram();
+    //glAttachShader(shaderProgram, vertexShader);
+    //glAttachShader(shaderProgram, fragmentShader);
+    //glLinkProgram(shaderProgram);
+    //{// Check if linking failed
+    //    int  success;
+    //    char infoLog[512];
+    //    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    //
+    //    if (!success)
+    //    {
+    //        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    //        std::cout << "ERROR::SHADER::LINKING::COMPILATION_FAILED\n" << infoLog << std::endl;
+    //    }
+    //}
 
-    // Vertex Shader
-    std::ifstream VertShader("Shaders/VertexShader.vert");
-    std::string VertContents((std::istreambuf_iterator<char>(VertShader)),
-        std::istreambuf_iterator<char>());
-    VertShader.close();
-    const char* vertexShaderSource = VertContents.c_str();
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-    {// Check if compilation failed
-        int  success;
-        char infoLog[512];
-        glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
 
-        if (!success)
-        {
-            glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-        }
-    }
-
-    // Fragment Shader
-    std::ifstream FragShader("Shaders/FragmentShader.frag");
-    std::string FragContents((std::istreambuf_iterator<char>(FragShader)),
-        std::istreambuf_iterator<char>());
-    FragShader.close();
-    //FragContents.c_str();
-    const char* fragmentShaderSource = FragContents.c_str();
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    {// Check if compilation failed
-        int  success;
-        char infoLog[512];
-        glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-
-        if (!success)
-        {
-            glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-        }
-    }
-
-    // Attach Shaders
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    {// Check if linking failed
-        int  success;
-        char infoLog[512];
-        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-
-        if (!success)
-        {
-            glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::LINKING::COMPILATION_FAILED\n" << infoLog << std::endl;
-        }
-    }
-
-
-    Object Obj1("assets/ballbearing.obj");
+    Object Obj1("assets/teapot.obj");
 
 
     std::vector<float> vertices = Obj1.Verticies;
@@ -159,19 +162,19 @@ int main()
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO); 
-    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(vertices[0]), &vertices[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), &vertices[0], GL_STATIC_DRAW);
 
 
     glBindBuffer(GL_ARRAY_BUFFER, NBO);
     glBufferData(GL_ARRAY_BUFFER, vertexNormals.size() * sizeof(vertexNormals[0]), &vertexNormals[0], GL_STATIC_DRAW);
-    
+
 
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, TriIndices.size() * sizeof(TriIndices[0]), &TriIndices[0], GL_STATIC_DRAW);
 
-    
+
     // What the vertex array 'looks like'
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -196,14 +199,14 @@ int main()
     float beta = 0.0f;
     float gamma = 0.0f;
     float alphaSpeed = 0.0f;
-    float betaSpeed= 0.0f;
+    float betaSpeed = 0.0f;
     float gammaSpeed = 0.0f;
 
 
-    glm::vec3 light = { 
+    glm::vec3 light = {
         ((float)rand() / RAND_MAX) - 0.5f,
         ((float)rand() / RAND_MAX) - 0.5f,
-        ((float)rand() / RAND_MAX) - 0.5f 
+        ((float)rand() / RAND_MAX) - 0.5f
     };
     unsigned int frame = 0;
 
@@ -223,23 +226,12 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-        // draw our first triangle
-        glUseProgram(shaderProgram);
-        GLint AlphaLocation = glGetUniformLocation(shaderProgram, "alpha");
-        glUniform1f(AlphaLocation, alpha);
-        GLint BetaLocation = glGetUniformLocation(shaderProgram, "beta");
-        glUniform1f(BetaLocation, beta);
-        GLint GammaLocation = glGetUniformLocation(shaderProgram, "gamma");
-        glUniform1f(GammaLocation, gamma);
-
-        GLint lightxaLocation = glGetUniformLocation(shaderProgram, "Light");
-        glUniform3f(lightxaLocation, light.x, light.y, light.z);
-
-        
-
-        GLint scaleLocation = glGetUniformLocation(shaderProgram, "Scale");
-        glUniform1f(scaleLocation, scale);
+        ShaderProgram.UseShader();
+        ShaderProgram.SetUniform1f("alpha", alpha);
+        ShaderProgram.SetUniform1f("beta", beta);
+        ShaderProgram.SetUniform1f("gamma", gamma);
+        ShaderProgram.SetUniform3f("Light", light.x, light.y, light.z);
+        ShaderProgram.SetUniform1f("Scale", scale);
 
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         glDrawElements(GL_TRIANGLES, TriIndices.size(), GL_UNSIGNED_INT, 0);
@@ -247,13 +239,14 @@ int main()
 
         if (frame % 10000 == 0)
         {
-            alphaSpeed = ((float)rand() / RAND_MAX )-0.5f;
-            betaSpeed  = ((float)rand() / RAND_MAX )-0.5f;
-            gammaSpeed = ((float)rand() / RAND_MAX )-0.5f;
+            alphaSpeed = ((float)rand() / RAND_MAX) - 0.5f;
+            betaSpeed = ((float)rand() / RAND_MAX) - 0.5f;
+            gammaSpeed = ((float)rand() / RAND_MAX) - 0.5f;
 
-        } else {
+        }
+        else {
             alpha += 0.001f * alphaSpeed;
-            beta  += 0.001f * betaSpeed;
+            beta += 0.001f * betaSpeed;
             gamma += 0.001f * gammaSpeed;
         }
 
