@@ -86,37 +86,31 @@ int main()
     );
 
 
-    Object Obj1("assets/teapot.obj");
-
-    std::vector<float> vertices = Obj1.Verticies;
-    std::vector<float> vertexNormals = Obj1.VertexNormals;
-
-    std::vector<unsigned int> TriIndices = Obj1.Indices;
-
-    VertexArray Vert;
-    VertexBuffer VertexBufferObject = {
+    Object Obj1("assets/icosahedron.obj");
+    VertexArray Vert1;
+    VertexBuffer VertexBufferObject1 = {
         GL_ARRAY_BUFFER,
         0,
         Obj1.Verticies,
         3,
         GL_FLOAT
     };
-    VertexBuffer NormalBufferObject = {
+    VertexBuffer NormalBufferObject1 = {
         GL_ARRAY_BUFFER,
         1,
         Obj1.VertexNormals,
         3,
         GL_FLOAT
     };
-    IndexBuffer IndexBufferObject = {
+    IndexBuffer IndexBufferObject1 = {
         GL_ELEMENT_ARRAY_BUFFER,
         Obj1.Indices,
         GL_UNSIGNED_INT
     };
+    Vert1.AddVertexBuffer(VertexBufferObject1);
+    Vert1.AddVertexBuffer(NormalBufferObject1);
+    Vert1.AddIndexBuffer(IndexBufferObject1);
 
-    Vert.AddVertexBuffer(VertexBufferObject);
-    Vert.AddVertexBuffer(NormalBufferObject);
-    Vert.AddIndexBuffer(IndexBufferObject);
 
     // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -165,7 +159,7 @@ int main()
         ShaderProgram.SetUniform3f("Light", light.x, light.y, light.z);
         ShaderProgram.SetUniform1f("Scale", scale);
 
-        Vert.Render();
+        Vert1.Render();
 
         if (frame % 10000 == 0)
         {

@@ -145,32 +145,53 @@ void Object::CreateVertexNormals(std::string FilePath)
 		}
 	}
 	Obj.close();
-	//std::cout << VertexNormals.size() << std::endl;
-	//VertexNormals.clear();
-	//std::cout << VertexNormals.size() << std::endl;
+
 	if (VertexNormals.size() == 0)
 	{
 		GenerateVertexNormalsFromVerticies();
 	}
-	//std::cout << VertexNormals.size() << std::endl;
-	//std::cout << Indices.size() << std::endl;
+	// Normalizes the vectors
+	for (int i = 0; i < VertexNormals.size() / 3; i++)
+	{
+		glm::vec3 Vec{ VertexNormals[3 * i + 0], VertexNormals[3 * i + 1], VertexNormals[3 * i + 2] };
+		glm::vec3 Norm = glm::normalize(Vec);
+		VertexNormals[3 * i + 0] = Norm.x;
+		VertexNormals[3 * i + 1] = Norm.y;
+		VertexNormals[3 * i + 2] = Norm.z;
+	}
+	std::cout << VertexNormals.size() << std::endl;
+	std::cout << Indices.size() << std::endl;
 
 
 }
 void Object::GenerateVertexNormalsFromVerticies()
 {
-	for (int i = 0; i < Indices.size() / 3; i++)// This is wrong IDK how, it is supposed to generate the normals for each face.
+	for (int i = 0; i < Verticies.size(); i++)
 	{
-		glm::vec3 A{ Verticies[Indices[(3 * i) + 0] + 0], Verticies[Indices[(3 * i) + 0] + 1], Verticies[Indices[(3 * i) + 0] + 2] };
-		glm::vec3 B{ Verticies[Indices[(3 * i) + 1] + 0], Verticies[Indices[(3 * i) + 1] + 1], Verticies[Indices[(3 * i) + 1] + 2] };
-		glm::vec3 C{ Verticies[Indices[(3 * i) + 2] + 0], Verticies[Indices[(3 * i) + 2] + 1], Verticies[Indices[(3 * i) + 2] + 2] };
-		glm::vec3 D = normalize(cross(B - A, C - A));
-		//std::cout << D.x << ' ' << D.y << ' ' << D.z << std::endl;
-		VertexNormals.push_back(D.x);
-		VertexNormals.push_back(D.y);
-		VertexNormals.push_back(D.z);
-
+		VertexNormals.push_back(0.0f);
+		VertexNormals.push_back(0.0f);
+		VertexNormals.push_back(0.0f);
 	}
+	for (int i = 0; i < Indices.size()/3; i++)// This is wrong IDK how, it is supposed to generate the normals for each face.
+	{
+		glm::vec3 A{ Verticies[3 * Indices[3 * i + 0] + 0], Verticies[3 * Indices[3 * i + 0] + 1], Verticies[3 * Indices[3 * i + 0] + 2] };
+		glm::vec3 B{ Verticies[3 * Indices[3 * i + 1] + 0], Verticies[3 * Indices[3 * i + 1] + 1], Verticies[3 * Indices[3 * i + 1] + 2] };
+		glm::vec3 C{ Verticies[3 * Indices[3 * i + 2] + 0], Verticies[3 * Indices[3 * i + 2] + 1], Verticies[3 * Indices[3 * i + 2] + 2] };
+		glm::vec3 D = cross(B - A, C - A);
+
+		VertexNormals[3 * Indices[3 * i + 0] + 0] -= D.x;
+		VertexNormals[3 * Indices[3 * i + 0] + 1] -= D.y;
+		VertexNormals[3 * Indices[3 * i + 0] + 2] -= D.z;
+					    						  
+ 		VertexNormals[3 * Indices[3 * i + 1] + 0] -= D.x;
+		VertexNormals[3 * Indices[3 * i + 1] + 1] -= D.y;
+		VertexNormals[3 * Indices[3 * i + 1] + 2] -= D.z;
+					    						  
+ 		VertexNormals[3 * Indices[3 * i + 2] + 0] -= D.x;
+		VertexNormals[3 * Indices[3 * i + 2] + 1] -= D.y;
+		VertexNormals[3 * Indices[3 * i + 2] + 2] -= D.z;
+	}
+
 }
 
 void Object::CreateIndicies(std::string FilePath)
