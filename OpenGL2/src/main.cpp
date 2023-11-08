@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include "Shader.h"
@@ -12,6 +13,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 void fps(int& nbFrames, double& lastTime, GLFWwindow* Window);
+void limitfps(double& startime, double& endtime);
 
 void GLAPIENTRY
 MessageCallback(GLenum source,
@@ -48,7 +50,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "0.000000", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, " ", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -86,7 +88,7 @@ int main()
     );
 
 
-    Object Obj1("assets/icosahedron.obj");
+    Object Obj1("assets/teapot.obj");
     VertexArray Vert1;
     VertexBuffer VertexBufferObject1 = {
         GL_ARRAY_BUFFER,
@@ -128,22 +130,29 @@ int main()
 
 
     glm::vec3 light = {
-        ((float)rand() / RAND_MAX) - 0.5f,
-        ((float)rand() / RAND_MAX) - 0.5f,
-        ((float)rand() / RAND_MAX) - 0.5f
+        +1.0f,                //((float)rand() / RAND_MAX) - 0.5f,
+        +1.0f,                //((float)rand() / RAND_MAX) - 0.5f,
+        -1.0f                 //((float)rand() / RAND_MAX) - 0.5f
     };
+    glm::vec3 location = {
+        0.0f,                //((float)rand() / RAND_MAX) - 0.5f,
+        0.0f,                //((float)rand() / RAND_MAX) - 0.5f,
+        0.0f                 //((float)rand() / RAND_MAX) - 0.5f
+    };
+    light = glm::normalize(light);
     unsigned int frame = 0;
-    int nbFrames = 0;
-    double lastTime = glfwGetTime();
     float scale = Obj1.MaxVertexValue;
 
+    double startime = 0.0;
+    double endtime = 0.0;
 
-    int i = 0;
+    float Constant = 0.01f;
+
     while (!glfwWindowShouldClose(window))
     {
-        fps(nbFrames, lastTime, window);
         // input
          // -----
+        startime = glfwGetTime();
         processInput(window);
 
         // render
@@ -157,6 +166,7 @@ int main()
         ShaderProgram.SetUniform1f("beta", beta);
         ShaderProgram.SetUniform1f("gamma", gamma);
         ShaderProgram.SetUniform3f("Light", light.x, light.y, light.z);
+        ShaderProgram.SetUniform3f("Location", location.x, location.y, location.z);
         ShaderProgram.SetUniform1f("Scale", scale);
 
         Vert1.Render();
@@ -164,20 +174,41 @@ int main()
         if (frame % 10000 == 0)
         {
             alphaSpeed = ((float)rand() / RAND_MAX) - 0.5f;
-            betaSpeed = ((float)rand() / RAND_MAX) - 0.5f;
+            betaSpeed  = ((float)rand() / RAND_MAX) - 0.5f;
             gammaSpeed = ((float)rand() / RAND_MAX) - 0.5f;
 
         }
         else {
-            alpha += 0.001f * alphaSpeed;
-            beta += 0.001f * betaSpeed;
-            gamma += 0.001f * gammaSpeed;
+            alpha += 0.1f * alphaSpeed;
+            beta += 0.1f * betaSpeed;
+            gamma += 0.1f * gammaSpeed;
         }
+
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        {
+            std::cout << location.z << std::endl;
+            location.z += Constant;
+        }
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        {
+            location.z -= Constant;
+        }
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        {
+            location.x -= Constant;
+        }
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        {
+            location.x += Constant;
+        }
+
 
         frame += 1;
         glfwSwapBuffers(window);
         glfwPollEvents();
 
+        endtime = glfwGetTime();
+        limitfps(startime, endtime);
     }
 
 
@@ -196,15 +227,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void fps(int &nbFrames, double &lastTime, GLFWwindow* Window)
+void limitfps(double &startime, double &endtime)
 {
-    double currentTime = glfwGetTime();
-    nbFrames++;
-    if (currentTime - lastTime >= 1.0) { // If last prinf() was more than 1 sec ago
-        // printf and reset timer
-        glfwSetWindowTitle(Window, std::to_string(double(nbFrames)).c_str());
-        nbFrames = 0;
-        lastTime += 1.0;
-
-    }
+    Sleep((1000.0 / 120.0) - (startime - endtime));
 }

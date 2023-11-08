@@ -7,6 +7,8 @@ uniform float beta;
 uniform float gamma;
 
 uniform vec3 Light;
+uniform vec3 Location;
+
 
 uniform float Scale;
 
@@ -35,10 +37,10 @@ void main()
     );
     Pos = (yaw*pitch*roll*aPos)/Scale;
 
-    outLight = yaw*pitch*roll*vec3(Light.x,Light.y,Light.z);
+    outLight = vec3(Light.x,Light.y,Light.z);
 
 
-    Normal = aNormals;
+    Normal = yaw*pitch*roll*aNormals;
 
-    gl_Position = vec4(Pos.x, Pos.y, Pos.z , 1.0);
+    gl_Position = vec4(Pos.x + Location.x, Pos.y + Location.y, Pos.z + Location.z, 1.0);
 }

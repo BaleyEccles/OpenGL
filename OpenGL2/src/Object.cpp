@@ -147,9 +147,10 @@ void Object::CreateVertexNormals(std::string FilePath)
 	Obj.close();
 
 	if (VertexNormals.size() == 0)
-	{
-		GenerateVertexNormalsFromVerticies();
+	{// There is a problem here I think it has to do with quads, as the models with only triagles work well (try sphere with and without creating normals)
+		GenerateVertexNormalsFromVerticies(); 
 	}
+
 	// Normalizes the vectors
 	for (int i = 0; i < VertexNormals.size() / 3; i++)
 	{
@@ -159,17 +160,11 @@ void Object::CreateVertexNormals(std::string FilePath)
 		VertexNormals[3 * i + 1] = Norm.y;
 		VertexNormals[3 * i + 2] = Norm.z;
 	}
-	std::cout << VertexNormals.size() << std::endl;
-	std::cout << Indices.size() << std::endl;
-
-
 }
 void Object::GenerateVertexNormalsFromVerticies()
 {
 	for (int i = 0; i < Verticies.size(); i++)
 	{
-		VertexNormals.push_back(0.0f);
-		VertexNormals.push_back(0.0f);
 		VertexNormals.push_back(0.0f);
 	}
 	for (int i = 0; i < Indices.size()/3; i++)// This is wrong IDK how, it is supposed to generate the normals for each face.
