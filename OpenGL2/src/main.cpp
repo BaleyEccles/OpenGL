@@ -9,6 +9,7 @@
 #include <random>
 #include "glm/glm.hpp"
 #include "VertexArray.h"
+#include "renderer.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -113,6 +114,8 @@ int main()
     Vert1.AddVertexBuffer(NormalBufferObject1);
     Vert1.AddIndexBuffer(IndexBufferObject1);
 
+    Renderer RendererMain(ShaderProgram);
+    RendererMain.AddVertexArray(Vert1);
 
     // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -161,15 +164,15 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        ShaderProgram.UseShader();
-        ShaderProgram.SetUniform1f("alpha", alpha);
-        ShaderProgram.SetUniform1f("beta", beta);
-        ShaderProgram.SetUniform1f("gamma", gamma);
-        ShaderProgram.SetUniform3f("Light", light.x, light.y, light.z);
-        ShaderProgram.SetUniform3f("Location", location.x, location.y, location.z);
-        ShaderProgram.SetUniform1f("Scale", scale);
+        RendererMain.SetUniform("alpha", alpha);
+        RendererMain.SetUniform("beta", beta);
+        RendererMain.SetUniform("gamma", gamma);
+        RendererMain.SetUniform("Light", light);
+        RendererMain.SetUniform("Location", location);
+        RendererMain.SetUniform("Scale", scale);
 
-        Vert1.Render();
+
+        RendererMain.Render();
 
         if (frame % 10000 == 0)
         {
