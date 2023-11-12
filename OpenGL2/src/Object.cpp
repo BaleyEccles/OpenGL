@@ -44,6 +44,7 @@ void Object::FormatFile(std::string FilePath)
 
 }
 
+
 void Object::CreateVerticies(std::string FilePath)
 {
 	std::ifstream Obj(FilePath);
@@ -102,7 +103,10 @@ void Object::CreateVerticies(std::string FilePath)
 		if (minz > Verticies[(3 * i) + 2]) { minz = Verticies[(3 * i) + 2]; }
 
 	}
-
+	for (int i = 0; i < Verticies.size(); i++)
+	{
+		Verticies[i] = Verticies[i] / MaxVertexValue;
+	}
 	//VertexSize = Verticies.size();
 	Obj.close();
 }
@@ -161,6 +165,7 @@ void Object::CreateVertexNormals(std::string FilePath)
 		VertexNormals[3 * i + 2] = Norm.z;
 	}
 }
+
 void Object::GenerateVertexNormalsFromVerticies()
 {
 	for (int i = 0; i < Verticies.size(); i++)

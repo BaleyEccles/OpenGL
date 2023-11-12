@@ -5,6 +5,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <fstream>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 class Shader {
 public:
@@ -20,6 +23,7 @@ public:
 	inline void SetUniform2f(const std::string name, float value, float value2)					{ glUniform2f(GetUniformLocation(name), value, value2); };
 	inline void SetUniform4f(const std::string name, float f0, float f1, float f2, float f3)	{ glUniform4f(GetUniformLocation(name), f0, f1, f2, f3); };
 	inline void SetUniform3f(const std::string name, float f0, float f1, float f2)				{ glUniform3f(GetUniformLocation(name), f0, f1, f2); };
+	inline void SetUniformM4(const std::string name, glm::mat4 mat)								{ glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]); };
 
 
 private:

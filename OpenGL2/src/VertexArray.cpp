@@ -45,6 +45,32 @@ void VertexArray::AddVertexBuffer(VertexBuffer buffer)
 
 }
 
+void VertexArray::UpdateVertexBuffers(bool KeepPrevData)
+{
+	if (KeepPrevData == true)
+	{
+		VertexArrayObject = NULL;
+		glGenVertexArrays(1, &VertexArrayObject);
+	}
+
+	for (int i = 0; i < VertexBuffers.size(); i++)
+	{
+		glBindVertexArray(VertexArrayObject);
+		VertexBufferObjects[i] = NULL;
+		glGenBuffers(1, &VertexBufferObjects[i]);
+
+		glBindBuffer(VertexBuffers[i].ObjectType, VertexBufferObjects[i]);
+		glBufferData(VertexBuffers[i].ObjectType, VertexBuffers[i].Data.size() * sizeof(VertexBuffers[i].Data[0]), &VertexBuffers[i].Data[0], GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(VertexBuffers[i].ShaderIndex);
+
+		glBindBuffer(VertexBuffers[i].ObjectType, VertexBufferObjects[i]);
+		glVertexAttribPointer(VertexBuffers[i].ShaderIndex, VertexBuffers[i].Stride, VertexBuffers[i].DataType, GL_FALSE, VertexBuffers[i].Stride * sizeof(float), (void*)0);
+		glBindBuffer(VertexBuffers[i].ObjectType, 0);
+		glBindVertexArray(0);
+	}
+}
+
 void VertexArray::AddIndexBuffer(IndexBuffer buffer)
 {
 	glBindVertexArray(VertexArrayObject);

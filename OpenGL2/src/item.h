@@ -2,17 +2,20 @@
 #include "Shader.h"
 #include "glm/glm.hpp"
 
-class Renderer {
+class Item {
 public:
-	Renderer(Shader shader);
+	Item(Shader shader);
 
-	~Renderer();
+	~Item();
 
 	void AddVertexArray(VertexArray Array);
 	void Render();
 	void SetUniform(std::string Name, float Data);
 	void SetUniform(std::string Name, int Data);
 	void SetUniform(std::string Name, glm::vec3 Data);
+	void SetUniform(std::string Name, glm::mat4 Data);
+
+	void ApplyFur();
 
 private:
 

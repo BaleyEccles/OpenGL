@@ -29,15 +29,16 @@ public:
     ~VertexArray();
 
     void AddVertexBuffer(VertexBuffer buffer);
+    void UpdateVertexBuffers(bool KeepPrevData = false);
+
     void AddIndexBuffer(IndexBuffer buffer);
 
     void Render();
 
+    std::vector<VertexBuffer> VertexBuffers;
 private:
     unsigned int VertexArrayObject;
     unsigned int IndexBufferObject;
     std::vector<unsigned int> VertexBufferObjects;
-
-    std::vector<VertexBuffer> VertexBuffers;
     IndexBuffer IndexBuf;
 };

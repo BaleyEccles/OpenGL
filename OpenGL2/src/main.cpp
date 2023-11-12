@@ -7,9 +7,13 @@
 #include "Shader.h"
 #include "Object.h"
 #include <random>
+
 #include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
 #include "VertexArray.h"
-#include "renderer.h"
+#include "item.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -90,32 +94,67 @@ int main()
 
 
     Object Obj1("assets/teapot.obj");
-    VertexArray Vert1;
-    VertexBuffer VertexBufferObject1 = {
-        GL_ARRAY_BUFFER,
-        0,
-        Obj1.Verticies,
-        3,
-        GL_FLOAT
-    };
-    VertexBuffer NormalBufferObject1 = {
-        GL_ARRAY_BUFFER,
-        1,
-        Obj1.VertexNormals,
-        3,
-        GL_FLOAT
-    };
-    IndexBuffer IndexBufferObject1 = {
-        GL_ELEMENT_ARRAY_BUFFER,
-        Obj1.Indices,
-        GL_UNSIGNED_INT
-    };
-    Vert1.AddVertexBuffer(VertexBufferObject1);
-    Vert1.AddVertexBuffer(NormalBufferObject1);
-    Vert1.AddIndexBuffer(IndexBufferObject1);
+    Object Obj2("assets/triangle.obj");
 
-    Renderer RendererMain(ShaderProgram);
-    RendererMain.AddVertexArray(Vert1);
+
+    VertexArray Vert1;
+    {
+        {
+            VertexBuffer VertexBufferObject1 = {
+                GL_ARRAY_BUFFER,
+                0,
+                Obj1.Verticies,
+                3,
+                GL_FLOAT
+            };
+            VertexBuffer NormalBufferObject1 = {
+                GL_ARRAY_BUFFER,
+                1,
+                Obj1.VertexNormals,
+                3,
+                GL_FLOAT
+            };
+            IndexBuffer IndexBufferObject1 = {
+                GL_ELEMENT_ARRAY_BUFFER,
+                Obj1.Indices,
+                GL_UNSIGNED_INT
+            };
+            Vert1.AddVertexBuffer(VertexBufferObject1);
+            Vert1.AddVertexBuffer(NormalBufferObject1);
+            Vert1.AddIndexBuffer(IndexBufferObject1);
+        }
+    }
+    VertexArray Vert2;
+    {
+        {
+            VertexBuffer VertexBufferObject = {
+                GL_ARRAY_BUFFER,
+                0,
+                Obj2.Verticies,
+                3,
+                GL_FLOAT
+            };
+            VertexBuffer NormalBufferObject = {
+                GL_ARRAY_BUFFER,
+                1,
+                Obj2.VertexNormals,
+                3,
+                GL_FLOAT
+            };
+            IndexBuffer IndexBufferObject = {
+                GL_ELEMENT_ARRAY_BUFFER,
+                Obj2.Indices,
+                GL_UNSIGNED_INT
+            };
+            Vert2.AddVertexBuffer(VertexBufferObject);
+            Vert2.AddVertexBuffer(NormalBufferObject);
+            Vert2.AddIndexBuffer(IndexBufferObject);
+        }
+    }
+    Item Teapot(ShaderProgram);
+    Teapot.AddVertexArray(Vert2);
+    Teapot.ApplyFur();
+    Teapot.AddVertexArray(Vert1);
 
     // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -124,23 +163,12 @@ int main()
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
 
-    float alpha = 0.0f;
-    float beta = 0.0f;
-    float gamma = 0.0f;
-    float alphaSpeed = 0.0f;
-    float betaSpeed = 0.0f;
-    float gammaSpeed = 0.0f;
 
 
     glm::vec3 light = {
         +1.0f,                //((float)rand() / RAND_MAX) - 0.5f,
         +1.0f,                //((float)rand() / RAND_MAX) - 0.5f,
         -1.0f                 //((float)rand() / RAND_MAX) - 0.5f
-    };
-    glm::vec3 location = {
-        0.0f,                //((float)rand() / RAND_MAX) - 0.5f,
-        0.0f,                //((float)rand() / RAND_MAX) - 0.5f,
-        0.0f                 //((float)rand() / RAND_MAX) - 0.5f
     };
     light = glm::normalize(light);
     unsigned int frame = 0;
@@ -150,11 +178,12 @@ int main()
     double endtime = 0.0;
 
     float Constant = 0.01f;
+    glm::vec3 location = glm::vec3(0.0f,0.0f,0.0f);
+
 
     while (!glfwWindowShouldClose(window))
     {
         // input
-         // -----
         startime = glfwGetTime();
         processInput(window);
 
@@ -164,29 +193,23 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        RendererMain.SetUniform("alpha", alpha);
-        RendererMain.SetUniform("beta", beta);
-        RendererMain.SetUniform("gamma", gamma);
-        RendererMain.SetUniform("Light", light);
-        RendererMain.SetUniform("Location", location);
-        RendererMain.SetUniform("Scale", scale);
 
+        glm::mat4 view = glm::mat4(1.0f);
+        glm::mat4 projection = glm::mat4(1.0f);
+        projection = glm::perspective(glm::radians(90.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 150.0f);
+        view = glm::translate(view, location);
+        Teapot.SetUniform("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+        Teapot.SetUniform("view", view);
 
-        RendererMain.Render();
+        glm::mat4 model = glm::mat4(1.0f);
+        float angle = 20.0f;
+        model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+        Teapot.SetUniform("model", model);
+        Teapot.SetUniform("Light", light);
 
-        if (frame % 10000 == 0)
-        {
-            alphaSpeed = ((float)rand() / RAND_MAX) - 0.5f;
-            betaSpeed  = ((float)rand() / RAND_MAX) - 0.5f;
-            gammaSpeed = ((float)rand() / RAND_MAX) - 0.5f;
+        Teapot.Render();
 
-        }
-        else {
-            alpha += 0.1f * alphaSpeed;
-            beta += 0.1f * betaSpeed;
-            gamma += 0.1f * gammaSpeed;
-        }
-
+        
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         {
             std::cout << location.z << std::endl;
