@@ -55,14 +55,15 @@ void Item::ApplyFur()
 	int Size = m_VertexVector.size();
 	for (int k = 0; k < Size; k++)
 	{
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 100; i++)
 		{
 			VertexArray ArrayL1 = m_VertexVector[k];
 			for (int j = 0; j < ArrayL1.VertexBuffers[0].Data.size() / 3; j++)
 			{
-				ArrayL1.VertexBuffers[1].Data[3 * j + 0] += i * 0.01f * ArrayL1.VertexBuffers[0].Data[3 * j + 0];
-				ArrayL1.VertexBuffers[1].Data[3 * j + 1] += i * 0.01f * ArrayL1.VertexBuffers[0].Data[3 * j + 1];
-				ArrayL1.VertexBuffers[1].Data[3 * j + 2] += i * 0.01f * ArrayL1.VertexBuffers[0].Data[3 * j + 2];
+				ArrayL1.VertexBuffers[2].Data[3 * j + 0] += i * 0.001f * ArrayL1.VertexBuffers[1].Data[3 * j + 0];
+				ArrayL1.VertexBuffers[2].Data[3 * j + 1] += i * 0.001f * ArrayL1.VertexBuffers[1].Data[3 * j + 1];
+				ArrayL1.VertexBuffers[2].Data[3 * j + 2] += i * 0.001f * ArrayL1.VertexBuffers[1].Data[3 * j + 2];
+				//                    ^  Dependent on the posof the vertex (text,normal,vert)  ^   
 			}
 			ArrayL1.UpdateVertexBuffers(true);
 			TempFurVec.push_back(ArrayL1);

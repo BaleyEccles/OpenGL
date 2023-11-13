@@ -93,37 +93,8 @@ int main()
     );
 
 
-    Object Obj1("assets/teapot.obj");
     Object Obj2("assets/triangle.obj");
 
-
-    VertexArray Vert1;
-    {
-        {
-            VertexBuffer VertexBufferObject1 = {
-                GL_ARRAY_BUFFER,
-                0,
-                Obj1.Verticies,
-                3,
-                GL_FLOAT
-            };
-            VertexBuffer NormalBufferObject1 = {
-                GL_ARRAY_BUFFER,
-                1,
-                Obj1.VertexNormals,
-                3,
-                GL_FLOAT
-            };
-            IndexBuffer IndexBufferObject1 = {
-                GL_ELEMENT_ARRAY_BUFFER,
-                Obj1.Indices,
-                GL_UNSIGNED_INT
-            };
-            Vert1.AddVertexBuffer(VertexBufferObject1);
-            Vert1.AddVertexBuffer(NormalBufferObject1);
-            Vert1.AddIndexBuffer(IndexBufferObject1);
-        }
-    }
     VertexArray Vert2;
     {
         {
@@ -141,6 +112,13 @@ int main()
                 3,
                 GL_FLOAT
             };
+            VertexBuffer TextureBufferObject = {
+                GL_ARRAY_BUFFER,
+                2,
+                Obj2.VertexTexture,
+                2,
+                GL_FLOAT
+            };
             IndexBuffer IndexBufferObject = {
                 GL_ELEMENT_ARRAY_BUFFER,
                 Obj2.Indices,
@@ -148,13 +126,13 @@ int main()
             };
             Vert2.AddVertexBuffer(VertexBufferObject);
             Vert2.AddVertexBuffer(NormalBufferObject);
+            Vert2.AddVertexBuffer(TextureBufferObject);
             Vert2.AddIndexBuffer(IndexBufferObject);
         }
     }
     Item Teapot(ShaderProgram);
     Teapot.AddVertexArray(Vert2);
     Teapot.ApplyFur();
-    Teapot.AddVertexArray(Vert1);
 
     // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -171,8 +149,7 @@ int main()
         -1.0f                 //((float)rand() / RAND_MAX) - 0.5f
     };
     light = glm::normalize(light);
-    unsigned int frame = 0;
-    float scale = Obj1.MaxVertexValue;
+    int frame = 0;
 
     double startime = 0.0;
     double endtime = 0.0;
@@ -202,10 +179,12 @@ int main()
         Teapot.SetUniform("view", view);
 
         glm::mat4 model = glm::mat4(1.0f);
-        float angle = 20.0f;
+        float angle = 110.0f;
         model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+
         Teapot.SetUniform("model", model);
         Teapot.SetUniform("Light", light);
+        Teapot.SetUniform("frame", frame);
 
         Teapot.Render();
 

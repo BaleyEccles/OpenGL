@@ -6,6 +6,7 @@ Object::Object(std::string FilePath)
 	CreateVerticies(FilePath);
 	CreateIndicies(FilePath);
 	CreateVertexNormals(FilePath);
+	CreateVertexTextureCoords(FilePath);
 
 }
 
@@ -166,6 +167,8 @@ void Object::CreateVertexNormals(std::string FilePath)
 	}
 }
 
+
+
 void Object::GenerateVertexNormalsFromVerticies()
 {
 	for (int i = 0; i < Verticies.size(); i++)
@@ -191,6 +194,46 @@ void Object::GenerateVertexNormalsFromVerticies()
 		VertexNormals[3 * Indices[3 * i + 2] + 1] -= D.y;
 		VertexNormals[3 * Indices[3 * i + 2] + 2] -= D.z;
 	}
+
+}
+
+void Object::CreateVertexTextureCoords(std::string FilePath)
+{
+
+	std::ifstream Obj(FilePath);
+	for (std::string line; std::getline(Obj, line); )
+	{
+		//std::cout << line << std::endl;
+		if (line[0] == 'v' && line[1] == 't')
+		{//v  40.6266  28.3457  -1.10804
+			std::vector<int> start;
+			std::vector<int> end;
+			for (int i = 0; i < line.size(); i++)
+			{
+				if (line[i] == ' ' && line[i + 1] != ' ')
+				{
+					start.push_back(i + 1);
+				}
+				if (line[i] == ' ' && line[i - 1] != ' ')
+				{
+					end.push_back(i);
+				}
+			}
+			end.erase(end.begin());
+			end.push_back(line.size());
+
+			for (int i = 0; i < start.size(); i++)
+			{
+				std::string Vert;
+				for (int k = 0; k < end[i] - start[i]; k++)
+				{
+					Vert.push_back(line[start[i] + k]);
+				}
+				VertexTexture.push_back(std::stof(Vert));
+			}
+		}
+	}
+	Obj.close();
 
 }
 

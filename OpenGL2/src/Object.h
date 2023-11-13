@@ -14,6 +14,7 @@ public:
 
 	std::vector<float> Verticies;	
 	std::vector<float> VertexNormals;
+	std::vector<float> VertexTexture;
 	std::vector<unsigned int> Indices;
 
 	int VertexSize;
@@ -29,6 +30,7 @@ private:
 	void FormatFile(std::string FilePath);
 	void CreateVerticies(std::string FilePath);
 	void CreateVertexNormals(std::string FilePath);
+	void CreateVertexTextureCoords(std::string FilePath);
 	void CreateIndicies(std::string FilePath);
 	void QuadToTri(std::vector<unsigned int> QuadIndices);
 	void GenerateVertexNormalsFromVerticies();
