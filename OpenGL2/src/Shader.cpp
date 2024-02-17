@@ -20,28 +20,30 @@ void Shader::UseShader()
 
 void Shader::CompileShaders()
 {
-	for (int i = 0; i < FilePath.size(); i++)
-	{
-        std::ifstream File(FilePath[i]);
-        std::string Contents((std::istreambuf_iterator<char>(File)),
-            std::istreambuf_iterator<char>());
-        File.close();
-        const char* Source = Contents.c_str();
-        Shaders.push_back(glCreateShader(ShaderType[i]));
-        glShaderSource(Shaders[i], 1, &Source, NULL);
-        glCompileShader(Shaders[i]);
-        {// Check if compilation failed
-            int  success;
-            char infoLog[512];
-            glGetShaderiv(Shaders[i], GL_COMPILE_STATUS, &success);
+  for (int i = 0; i < FilePath.size(); i++)
+    {
+      std::ifstream File;
+      File.open(FilePath[i]);
+      std::string Contents((std::istreambuf_iterator<char>(File)), std::istreambuf_iterator<char>());
+   
+      File.close();
+      const char* Source = Contents.c_str();
+      Shaders.push_back(glCreateShader(ShaderType[i]));
+      glShaderSource(Shaders[i], 1, &Source, NULL);
+      glCompileShader(Shaders[i]);
 
-            if (!success)
-            {
-                glGetShaderInfoLog(Shaders[i], 512, NULL, infoLog);
-                std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << "PATH: " << FilePath[i] << "\n" << infoLog << std::endl;
-            }
-        }
-	}
+      {// Check if compilation failed
+	int  success;
+	char infoLog[512];
+	glGetShaderiv(Shaders[i], GL_COMPILE_STATUS, &success);
+	    
+	if (!success)
+	  {
+	    glGetShaderInfoLog(Shaders[i], 512, NULL, infoLog);
+	    std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << "PATH: " << FilePath[i] << "\n" << infoLog << std::endl;
+	  }
+      }
+    }
 }
 
 void Shader::AttachShaders()

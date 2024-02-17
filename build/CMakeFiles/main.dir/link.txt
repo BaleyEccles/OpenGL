@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/main.dir/OpenGL2/src/main.cpp.o CMakeFiles/main.dir/OpenGL2/src/item.cpp.o CMakeFiles/main.dir/OpenGL2/src/Object.cpp.o CMakeFiles/main.dir/OpenGL2/src/Shader.cpp.o CMakeFiles/main.dir/OpenGL2/src/VertexArray.cpp.o CMakeFiles/main.dir/OpenGL2/src/glad.c.o -o main  /usr/lib64/libOpenGL.so /usr/lib64/libGLX.so -lglfw 

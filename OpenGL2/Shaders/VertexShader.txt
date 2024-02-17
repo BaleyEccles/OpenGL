@@ -6,7 +6,7 @@ layout (location = 2) in vec2 aTexture;
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
-flat uniform int frame;
+uniform int frame;
 
 uniform vec3 Light;
 
